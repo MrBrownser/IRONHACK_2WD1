@@ -28,10 +28,36 @@ end
 # TESTING IMPLEMENTING
 
 describe Calculator do
+	before do
+		@calculator = Calculator.new
+
+	end
+
 	describe "#addition" do
-		it "should ad 5 and 6" do
-			addition = Calculator.new.addition(5,6)
+		it "should add 5 and 6" do
+			addition = @calculator.addition(5,6)
 			expect(addition).to eq(11)
+		end
+	end
+
+	describe "#substraction" do
+		it "should substract 2 from 8" do
+			substraction = @calculator.substraction(8,2)
+			expect(substraction).to eq(6)
+		end
+	end
+
+	describe "#multiplication" do
+		it "should multiplication 3 by 8" do
+			multiplication = @calculator.multiplication(3, 8)
+			expect(multiplication).to eq(24)
+		end
+	end
+
+	describe "#division" do
+		it "should dvide 35 by 5" do
+			division = @calculator.division(35,5)
+			expect(division).to eq(7)
 		end
 	end
 end
