@@ -26,11 +26,9 @@ class Calculator
 end
 
 # TESTING IMPLEMENTING
-
 describe Calculator do
 	before do
 		@calculator = Calculator.new
-
 	end
 
 	describe "#addition" do
