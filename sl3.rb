@@ -66,16 +66,33 @@ class CompleteIMDBSearcher
 		series.sort_by! { |show| show[:seasons] }.last[:show].gsub("\"", "")
 	end
 
-	def most_episodes_from
-
+	def most_episodes_from(series_arr)
+		series = []
+		series_arr.each do |serie|
+			temp_info = get_show_info(get_show_id(serie))
+			episodes = 0
+			temp_info.seasons.each {|season| episodes += season.episodes.count}
+			series << {show: temp_info.title, episodes: episodes}
+		end
+		series.sort_by! {|show| show[:episodes]}.last[:show].gsub("\"", "")
 	end
 
-	def serious_series_comparator # aka best_show_ever
+	def serious_series_comparator(series_arr) # aka best_show_ever
+		@series = []
+		series_arr.each do |serie|
+			tv_show = get_show_info(get_show_id(serie))
+			@series << {show: tv_show.title, rating: tv_show.rating}
+		end
 
+		@series.sort_by! {|show| show[:rating]}.last[:show].gsub("\"", "")
 	end
 
-	def top_x_movies
-
+	def top_x_movies(number)
+		top = Imdb::Top250.new
+		top = top.movies.take(number)
+		top_limit = []
+		top.each {|movie| top_limit << movie.title.split.drop(1).join(' ')}
+		top_limit
 	end
 
 	private
@@ -97,14 +114,14 @@ describe CompleteIMDBSearcher do
 	end
 
 	describe "#count_imdb_results" do
-		it "Counts the results from a query" do
+		it "returns more than 100 results from a 'cat' query" do
 			count = @searcher.count_imdb_results("Cat")
 			expect(count).to be > 100
 		end
 	end
 
 	describe "#most_seasons_from" do
-		it "Takes an array of TV shows and returns the one with most seasons" do
+		it "returns the series with most seasons from a given array" do
 			most_seasons_serie = @searcher.most_seasons_from(@testing_shows_arr)
 			expect(most_seasons_serie).to eq("Friends")
 		end
@@ -127,24 +144,26 @@ describe CompleteIMDBSearcher do
 	describe "#top_x_movies" do
 		it "Returns the return a hash with the top 1 movie following IMDB rating" do
 			best_movie = @searcher.top_x_movies(1)
+			movie = ["Cadena perpetua"]
 
-			expect(best_movie.keys.first).to eq("Shawsank Redemption")
+			expect(best_movie).to eq(movie)
 		end
 
 		# Ask for 5
 		it "Returns the return a hash with the top 5 movies following IMDB rating" do
-			movie_rating_results = { 'Shawsank Redemption' => 9.2, 'The Godfather' => 9.2, 'The Godfather II' => 9.0, 'The Dark Knight' => 8.9, 'Il buono, il brutto, il cattivo' => 8.9 }
+			movie_rating_results = ["Cadena perpetua", "El padrino", "El padrino. Parte II", "El caballero oscuro", "Pulp Fiction"]
 			best_movies = @searcher.top_x_movies(5)
 
-			expect(best_movie).to be(movie_rating_results)
+			expect(best_movies).to eq(movie_rating_results)
 		end
 
 		# Ask for 10
 		it "Returns the return a hash with the top 10 movies following IMDB rating" do
-			movie_rating_results = { 'Shawsank Redemption' => 9.2, 'The Godfather' => 9.2, 'The Godfather II' => 9.0, 'The Dark Knight' => 8.9, 'Il buono, il brutto, il cattivo' => 8.9, '12 Angry Men' => 8.9, 'Schlinder\'s list' => 8.9, 'The Lord of the Rings: The Return of the King' => 8.9, 'Fight Club' => 8.9 }
+			movie_rating_results = ["Cadena perpetua", "El padrino", "El padrino. Parte II", "El caballero oscuro", "Pulp Fiction", "El bueno, el feo y el malo", "12 hombres sin piedad", "La lista de Schindler", "El señor de los anillos: El retorno del rey", "El club de la lucha"]
 			best_movies = @searcher.top_x_movies(10)
 
-			expect(best_movies).to be(movie_rating_results)
+			expect(best_movies).to eq(movie_rating_results)
 		end
 	end
+
 end
