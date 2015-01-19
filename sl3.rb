@@ -53,17 +53,17 @@ class CompleteIMDBSearcher
 	end
 
 	def most_seasons_from(series_arr)
-		series = {}
+		series = []
 
 		series_arr.each do |serie|
+			# binding.pry
+			# tv_show = get_show_info(show)
+			# @series << {show: tv_show.title, rating: tv_show.rating}
 			temp_info = get_show_info(get_show_id(serie))
-			series[temp_info.title.to_sym] = temp_info.seasons.count
+			series << { show: temp_info.title, seasons: temp_info.seasons.count }
+			# series[temp_info.title.to_sym] = temp_info.seasons.count
 		end
-
-		series_arr.sort do |serie|
-			series[serie] # Adri dice .to_sym
-		end
-		series_arr.last
+		series.sort_by! { |show| show[:seasons] }.last[:show].gsub("\"", "")
 	end
 
 	def most_episodes_from
@@ -79,12 +79,12 @@ class CompleteIMDBSearcher
 	end
 
 	private
-	def get_show_info(show_name)
-		Imdb::Serie.new(get_show_id(show_name))
+	def get_show_info(show_id)
+		name = Imdb::Serie.new(show_id)
 	end
 
-	def get_show_id(show)
-		Imdb::Search.new(show).movies.first.id
+	def get_show_id(show_name)
+		id = Imdb::Search.new(show_name).movies.first.id
 	end
 end
 # TESTING IMPLEMENTATION
@@ -93,7 +93,7 @@ describe CompleteIMDBSearcher do
 	before do
 		@searcher = CompleteIMDBSearcher.new
 		# @testing_shows_arr = ["Friends"]
-		@testing_shows_arr = "Breaking Bad", "Friends", "Game of Thrones", "The Office"]
+		@testing_shows_arr = ["Breaking Bad", "Friends", "Game of Thrones", "The Office"]
 	end
 
 	describe "#count_imdb_results" do
