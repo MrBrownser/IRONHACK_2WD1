@@ -26,29 +26,12 @@ class Calculator
 end
 
 # TESTING IMPLEMENTING
-calculator = Calculator.new
 
-print "Testing addition method: "
-if calculator.addition(1, 2) == 3
-	puts "OK"
-else
-	puts "FAIL"
+describe Calculator do
+	describe "#addition" do
+		it "should ad 5 and 6" do
+			addition = Calculator.new.addition(5,6)
+			expect(addition).to eq(11)
+		end
+	end
 end
-
-print "Testing addition method: "
-if calculator.addition([], 2) == 3
-	puts "OK"
-else
-	puts "FAIL"
-end
-
-# --- substraction
-
-print "Testing substraction method: "
-if calculator.substraction(5, 2) == 3
-	puts "OK"
-else
-	puts "FAIL"
-end
-
-# ---
