@@ -59,7 +59,6 @@ end
 
 
 # testing
-
 describe SeriesMasterOfTheUniverse do
 	before do
 		@series = SeriesMasterOfTheUniverse.new
